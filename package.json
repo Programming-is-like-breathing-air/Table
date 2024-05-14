@@ -2,6 +2,7 @@
   "name": "table-functional",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.14.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -21,6 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
+    "express": "^4.19.2",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
     "react": "^18",
@@ -36,7 +39,9 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "nodemon": "^3.1.0",
     "postcss": "^8",
+    "prisma": "^5.14.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
