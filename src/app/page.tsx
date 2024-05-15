@@ -8,7 +8,7 @@ import { columns } from "../components/columns"
 import { DataTable } from "../components/data-table"
 import { UserNav } from "../components/user-nav"
 import { taskSchema } from "../data/schema"
-
+import InputTask from "./api/task/InputTask"
 export const metadata: Metadata = {
   title: "Tasks",
   description: "A task and issue tracker build using Tanstack Table.",
@@ -57,6 +57,7 @@ export default async function TaskPage() {
           <div className="flex items-center space-x-2">
             <UserNav />
           </div>
+            <InputTask />
         </div>
         <DataTable data={tasks} columns={columns} />
       </div>
