@@ -9,6 +9,8 @@ import {
   TableCell,
 } from '@/components/ui/table'; // Update the path as necessary
 import EditTask from './EditTask';
+import { DataTableToolbar } from '@/components/data-table-toolbar';
+import { DataTablePagination } from '@/components/data-table-pagination';
 interface Task {
   id: string;
   title: string;
@@ -56,6 +58,7 @@ const TasksTable: React.FC = () => {
     if (error) return <div>Error: {error}</div>;
   
     return (
+      <div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -85,6 +88,8 @@ const TasksTable: React.FC = () => {
           ))}
         </TableBody>
       </Table>
+      {/* <DataTablePagination table={}/> */}
+      </div>
     );
   };
   

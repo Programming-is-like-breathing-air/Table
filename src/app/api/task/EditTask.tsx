@@ -93,7 +93,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
     <Dialog>
     <Toaster />
     <DialogTrigger asChild>
-      <Button variant="outline">Edit Task</Button>
+      <button>Edit Task</button>
     </DialogTrigger>
     <DialogContent className="sm:max-w-[425px]">
       <form onSubmit={handleSubmit}>
@@ -170,7 +170,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Update Task</Button>
+          <button type="submit">Update Task</button>
         </DialogFooter>
       </form>
     </DialogContent>
