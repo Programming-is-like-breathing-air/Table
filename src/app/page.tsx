@@ -9,24 +9,19 @@ import { DataTable } from "../components/data-table"
 import { UserNav } from "../components/user-nav"
 import { taskSchema } from "../data/schema"
 import InputTask from "./api/task/InputTask"
+import TasksTable from "./api/task/TableData"
 export const metadata: Metadata = {
   title: "Tasks",
   description: "A task and issue tracker build using Tanstack Table.",
 }
-
-// Simulate a database read for tasks.
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/data/tasks.json")
-  )
-
-  const tasks = JSON.parse(data.toString())
-
-  return z.array(taskSchema).parse(tasks)
+async function getTasksData() {
+  const response = await fetch('http://localhost:5000/api/task');
+  const tasks = await response.json();
+  return z.array(taskSchema).parse(tasks);
 }
 
 export default async function TaskPage() {
-  const tasks = await getTasks()
+  const tasks = await getTasksData()
 
   return (
     <>
@@ -59,7 +54,7 @@ export default async function TaskPage() {
           </div>
             <InputTask />
         </div>
-        <DataTable data={tasks} columns={columns} />
+        <TasksTable />
       </div>
     </>
   )

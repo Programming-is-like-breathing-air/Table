@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -30,7 +30,18 @@ const InputTask: React.FC = () => {
     label: '',
     priority: ''
   });
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/task');
+      const jsonData = await response.json();
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+    }
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -52,6 +63,7 @@ const InputTask: React.FC = () => {
           description: 'Task added successfully!',
         });
         setFormData({ id: '', title: '', status: '', label: '', priority: '' }); // Reset form
+
       } else {
         toast({
           description: 'Failed to submit task',

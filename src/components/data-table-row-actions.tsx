@@ -2,7 +2,7 @@
 
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Row } from "@tanstack/react-table"
-
+import DeleteTaskButton from "@/app/api/task/DeleteTask"
 import { Button } from "./ui/button"
 import {
   DropdownMenu,
@@ -24,12 +24,26 @@ import { taskSchema } from "../data/schema"
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
+async function getTasksData() {
+  const response = await fetch('http://localhost:5000/api/task');
+  const tasks = await response.json();
+}
+async function deleteTask(id: string) {
+  const response = await fetch(`http://localhost:5000/api/task/delete/${id}`, {
+    method: 'DELETE',
+  });
 
+  if (!response.ok) {
+    const message = await response.json();
+    alert(`Failed to delete task: ${message}`);
+  } else {
+    alert('Task was successfully deleted!');
+    getTasksData();// Optionally refresh the page or update state to reflect changes
+  }
+}
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,21 +59,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuItem>Edit</DropdownMenuItem>
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
         <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => deleteTask(id)}>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
