@@ -2,7 +2,8 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const app = express();
-
+const cors = require("cors");
+app.use(cors());
 app.use(express.json());
 
 app.post("/api/task", async (req, res) => {
@@ -53,7 +54,7 @@ app.get("/api/task/:id", async (req, res) => {
 });
 
 // Update a Task
-app.put("/api/task/:id", async (req, res) => {
+app.put("/api/task/update/:id", async (req, res) => {
   try {
     const { title, status, label, priority } = req.body;
     const task = await prisma.task.update({
@@ -68,7 +69,7 @@ app.put("/api/task/:id", async (req, res) => {
 });
 
 // Delete a Task
-app.delete("/api/task/:id", async (req, res) => {
+app.delete("/api/task/delete/:id", async (req, res) => {
   try {
     const task = await prisma.task.delete({
       where: { id: req.params.id }
