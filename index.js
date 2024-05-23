@@ -5,7 +5,7 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
-
+//Create a task
 app.post("/api/task", async (req, res) => {
   try {
     const { id, title, status, label, priority } = req.body;
@@ -52,34 +52,82 @@ app.get("/api/task/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+//Get task from status
+app.get("/api/task/status/:status", async (req, res) => {
+  const { status } = req.params;
+  try {
+    const tasks = await prisma.task.findMany({
+      where: { status },
+    });
+    res.json(tasks);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+//Get task from priority
+app.get("/api/task/priority/:priority", async (req, res) => {
+  const { priority } = req.params;
+  try {
+    const tasks = await prisma.task.findMany({
+      where: { priority },
+    });
+    res.json(tasks);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // Update a Task
 app.put("/api/task/update/:id", async (req, res) => {
   try {
+    const { id } = req.params;
     const { title, status, label, priority } = req.body;
-    const task = await prisma.task.update({
-      where: { id: req.params.id },
-      data: { title, status, label, priority }
+
+    // Use Prisma to update the task, dynamically setting only provided fields
+    const data = {};
+    if (title) data.title = title;
+    if (status) data.status = status;
+    if (label) data.label = label;
+    if (priority) data.priority = priority;
+
+    if (Object.keys(data).length === 0) {
+      res.json("No updates provided.");
+      return;
+    }
+
+    // Execute the update using Prisma
+    const updateTask = await prisma.task.update({
+      where: { id: id },
+      data: data
     });
-    res.json(task);
+
+    res.json("Task was updated!");
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send("Server error");
   }
 });
 
+
+
 // Delete a Task
 app.delete("/api/task/delete/:id", async (req, res) => {
+  const { id } = req.params;
   try {
-    const task = await prisma.task.delete({
-      where: { id: req.params.id }
+    const deleteTask = await prisma.task.delete({
+      where: { id: id },
     });
-    res.json({ message: "Task deleted" });
+    res.json("Task was deleted!");
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    if (err.code === 'P2025') { // Prisma error code for record not found
+      res.status(404).json("Task not found.");
+    } else {
+      res.status(500).send("Server error");
+    }
   }
 });
+
 
 // Start Server
 app.listen(5000, (err)  => {

@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/table'; // Update the path as necessary
 import EditTask from './EditTask';
 import { Input } from '@/components/ui/input'; // Ensure path is correct
-
+import { DataTablePagination } from './DataTablePagination';
+import { TaskFilter } from './Filter';
 interface Task {
   id: string;
   title: string;
@@ -19,34 +20,51 @@ interface Task {
 }
 
 const TasksTable: React.FC = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [tasksPerPage] = useState<number>(10);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string[] | undefined>(undefined);
+  const [priorityFilter, setPriorityFilter] = useState<string[] | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [tasksPerPage] = useState<number>(10);
 
-    useEffect(() => {
-      fetchTasks();
-    }, [searchTerm]);
-
-    const fetchTasks = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const url = searchTerm
-          ? `http://localhost:5000/api/task/title/${searchTerm}`
-          : 'http://localhost:5000/api/task';
-        const response = await fetch(url);
-        const jsonData = await response.json();
-        setTasks(jsonData);
-      } catch (err) {
-        console.error('Error fetching tasks:', err);
-        setError('Failed to fetch tasks');
-      } finally {
-        setLoading(false);
+  useEffect(() => {
+    fetchTasks();
+  }, [searchTerm, statusFilter, priorityFilter]);
+  const fetchData = async (path: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/task${path}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch data: ', error);
+      return [];
+    }
+  };
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const query = new URLSearchParams();
+      if (searchTerm) query.set('title', searchTerm);
+      if (statusFilter) query.set('status', statusFilter.join(','));
+      if (priorityFilter) query.set('priority', priorityFilter.join(','));
+
+      const url = `http://localhost:5000/api/task?${query.toString()}`;
+      const response = await fetch(url);
+      const jsonData = await response.json();
+      setTasks(jsonData);
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+      setError('Failed to fetch tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
 
     const deleteTask = async (id: string) => {
       try {
@@ -73,12 +91,14 @@ const TasksTable: React.FC = () => {
 
     return (
       <div>
+        <div className="flex w-[20%] items-center justify-center text-sm font-medium">
         <Input
           placeholder="Search tasks by title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-4"
         />
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -108,13 +128,11 @@ const TasksTable: React.FC = () => {
             ))}
           </TableBody>
         </Table>
-        <div>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
-            <button key={number} onClick={() => paginate(number)} style={{ margin: 5 }}>
-              {number}
-            </button>
-          ))}
-        </div>
+        <DataTablePagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={paginate}
+    />
       </div>
     );
   };

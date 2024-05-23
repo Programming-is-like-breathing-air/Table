@@ -37,20 +37,21 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
 
   const { toast } = useToast();
 
+  // Fetch task details
+  const fetchTask = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/task/${taskId}`);
+      const jsonData = await response.json();
+      setFormData(jsonData);
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Error fetching task:', err);
+      setIsLoading(false);
+    }
+  };
+
   // Fetch task details when component mounts
   useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/task/${taskId}`);
-        const jsonData = await response.json();
-        setFormData(jsonData);
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Error fetching task:', err);
-        setIsLoading(false);
-      }
-    };
-
     fetchTask();
   }, [taskId]);
 
@@ -60,6 +61,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true); // Optionally show a loading state while updating
     try {
       const response = await fetch(`http://localhost:5000/api/task/update/${taskId}`, {
         method: 'PUT',
@@ -72,8 +74,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
         toast({
           description: 'Task updated successfully!',
         });
-        setFormData({ title: '', status: '', label: '', priority: '' });
-        window.location.reload();
+        fetchTask(); // Refetch the task details to update the UI
       } else {
         toast({
           description: 'Failed to update task.',
@@ -84,6 +85,8 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
       toast({
         description: error.message,
       });
+    } finally {
+      setIsLoading(false); // Hide loading state after update
     }
   };
 
@@ -111,6 +114,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
             <Input
               id="id"
               name="id"
+              value={taskId}
               required
               disabled
               className="col-span-3"
@@ -170,7 +174,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId }) => {
           </div>
         </div>
         <DialogFooter>
-          <button type="submit">Update Task</button>
+          <Button type="submit">Update Task</Button>
         </DialogFooter>
       </form>
     </DialogContent>

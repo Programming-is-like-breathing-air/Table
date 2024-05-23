@@ -55,7 +55,7 @@ export default function TaskPage() {
                         <InputTask />
                     </div>
                 </div>
-                <DataTable columns={columns} data={tasks} />
+                
                 <TasksTable />
             </div>
         </>
