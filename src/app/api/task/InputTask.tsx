@@ -155,6 +155,19 @@ const InputTask: React.FC = () => {
                 required
                 className="col-span-3"
               />
+              {/* <select
+                id="priority"
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+                className="col-span-3"
+                required
+              >
+                <option value="">Select Priority</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select> */}
             </div>
           </div>
           <DialogFooter>

@@ -76,6 +76,24 @@ app.get("/api/task/priority/:priority", async (req, res) => {
     console.error(err.message);
   }
 });
+//Get task from title
+app.get("/api/task/title/:title", async (req, res) => {
+  try {
+    const { title } = req.params;
+    const taskTitles = await prisma.task.findMany({
+      where: {
+        title: {
+          contains: title,
+          mode: 'insensitive' // Assumes case-insensitive search; remove for case-sensitive.
+        }
+      }
+    });
+    res.json(taskTitles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 // Update a Task
 app.put("/api/task/update/:id", async (req, res) => {

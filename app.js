@@ -64,7 +64,7 @@ app.post("/api/task", async (req, res) => {
       console.error(err.message);
     }
   });
-    // Get task from status
+    // Get task from title
     app.get("/api/task/title/:title", async (req, res) => {
       try {
         const { title } = req.params;
