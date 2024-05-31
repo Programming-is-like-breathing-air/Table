@@ -1,19 +1,56 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Getting Started
+These instructions will guide you on how to set up and run the project on your new machine.
 
-First, run the development server:
+## Prerequisites
+Make sure you have the following software installed:
 
+Node.js, npm or Yarn,  Git
+## Installation
+
+1. Clone the project repository:
+```bash
+git clone https://github.com/your-username/your-project.git
+cd your-project
+```
+2. Install project dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+3. Configure environment variables:
+
+- Create a .env file in the project root directory.
+- Copy the content from .env.example and paste it into .env.
+- Edit the .env file with your specific environment variables (e.g., database connection string to change your database name and password).
+```bash
+cp .env.example .env
+# Then edit .env with the correct values
+```
+4. Generate Prisma client:
+```bash
+npx prisma generate
+```
+5. Run database migrations:
+- Run the following command to create or update the database schema.
+```bash
+npx prisma migrate dev
+# or
+npx prisma migrate deploy
+```
+6. Import initial data into database
+- Open the importTask.js file and change your database connection string and run this command.
+```bash
+node importTasks.js
+```
+7.Running the Project
+- After following the installation steps, you can start the project using:
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+node index
 ```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
